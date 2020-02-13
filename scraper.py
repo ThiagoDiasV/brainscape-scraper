@@ -1,10 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 from sys import argv
 from typing import List
-from ipdb import set_trace
+# from ipdb import set_trace
 import csv
 from string import ascii_letters, digits
 
@@ -73,7 +74,13 @@ def get_back_card_info(card: WebElement) -> str:
     """
     Get the back info of each card
     """
-    return card.find_element_by_class_name("back").text
+    back_card = card.find_element_by_class_name("back")
+    card_text = back_card.text
+    # card_image = back_card.find_element_by_tag_name('img')
+    # if card_image:
+    #     card_image_link = card_image.get_attribute('src')
+    # return (card_text, card_image_link)
+    return card_text
 
 
 def get_file_name_for_csv_files(chrome_webdriver: WebDriver) -> str:
@@ -92,22 +99,26 @@ def get_cards_info_of_deck(chrome_webdriver: WebDriver, deck: WebElement):
     """
     # deck_info = dict()
 
-    deck.find_element_by_class_name("ion-ios-glasses-outline").click()
-    sleep(2)
-    cards_window_selection = chrome_webdriver.find_element_by_class_name(
-        "preview-card-table"
-    )
-    cards_list = cards_window_selection.find_elements_by_class_name("preview-card")
-    csv_file_name = get_file_name_for_csv_files(chrome_webdriver)
+    try: 
+        glasses_icon = deck.find_element_by_class_name("ion-ios-glasses-outline")
+        glasses_icon.click()
+        sleep(2)
+        cards_window_selection = chrome_webdriver.find_element_by_class_name(
+            "preview-card-table"
+        )
+        cards_list = cards_window_selection.find_elements_by_class_name("preview-card")
+        csv_file_name = get_file_name_for_csv_files(chrome_webdriver)
 
-    with open(f"{csv_file_name}.csv".replace(":", ""), "w", newline="") as csv_file:
-        writer = csv.writer(csv_file, delimiter=" ")
-        for card in cards_list:
-            front_info = get_front_card_info(card)
-            back_info = get_back_card_info(card)
-            writer.writerow([front_info, back_info])
+        with open(f"{csv_file_name}.csv", "w", newline="") as csv_file:
+            writer = csv.writer(csv_file, delimiter=" ")
+            for card in cards_list:
+                front_info = get_front_card_info(card)
+                back_info = get_back_card_info(card)
+                writer.writerow([front_info, back_info])
 
-    chrome_webdriver.find_element_by_class_name("close-button").click()
+        chrome_webdriver.find_element_by_class_name("close-button").click()
+    except NoSuchElementException:
+        pass
 
 
 def main():
@@ -118,9 +129,17 @@ def main():
     for child in children:
         child.click()
         sleep(2)
-        decks_list = get_children_decks(chrome, child)
+        try:
+            decks_list = get_children_decks(chrome, child)
+        except NoSuchElementException:
+            sleep(5)
+            decks_list = get_children_decks(chrome, child)
         for deck in decks_list:
-            get_cards_info_of_deck(chrome, deck)
+            try: 
+                get_cards_info_of_deck(chrome, deck)
+            except NoSuchElementException:
+                sleep(5)
+                get_cards_info_of_deck(chrome, deck)
 
     sleep(6000000)
 
