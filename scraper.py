@@ -64,19 +64,26 @@ def get_children_decks(
     return decks
 
 
-def get_front_card_info(card: WebElement) -> str:
+def get_images_from_cards(card: WebElement, card_side: str) -> str:
     """
-    Get the front info of each card
+    If a card element has an image this function will get this img tag
     """
-    return card.find_element_by_class_name("front").text
+    try:
+        parent_element = card.find_element_by_class_name(card_side)
+        img_element = parent_element.find_element_by_tag_name("img")
+        src_img = img_element.get_attribute("src")
+        return f'\n<img src="{src_img}" >'
+    except NoSuchElementException:
+        return ""
 
 
-def get_back_card_info(card: WebElement) -> str:
+def get_card_text(card: WebElement, card_side: str) -> str:
     """
-    Get the back info of each card
+    Get the card text
     """
-    back_card = card.find_element_by_class_name("back")
-    card_text = back_card.text
+    card_img_tag = get_images_from_cards(card, card_side)
+    card_info = card.find_element_by_class_name(card_side)
+    card_text = card_info.text + card_img_tag
     return card_text
 
 
@@ -115,8 +122,8 @@ def get_cards_info_of_deck(chrome_webdriver: WebDriver, deck: WebElement):
         ) as csv_file:
             writer = csv.writer(csv_file, delimiter=",")
             for card in cards_list:
-                front_info = get_front_card_info(card)
-                back_info = get_back_card_info(card)
+                front_info = get_card_text(card, "front")
+                back_info = get_card_text(card, "back")
                 writer.writerow([front_info, back_info])
 
         chrome_webdriver.find_element_by_class_name("close-button").click()
@@ -144,6 +151,7 @@ def main():
                 sleep(5)
                 get_cards_info_of_deck(chrome, deck)
 
+    print("Terminei!")
     sleep(60)
 
 
