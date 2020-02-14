@@ -5,9 +5,10 @@ from selenium.common.exceptions import NoSuchElementException
 from time import sleep
 from sys import argv
 from typing import List
-# from ipdb import set_trace
+from ipdb import set_trace
 import csv
 from string import ascii_letters, digits
+import os
 
 
 def create_webdriver_instance() -> WebDriver:
@@ -76,10 +77,6 @@ def get_back_card_info(card: WebElement) -> str:
     """
     back_card = card.find_element_by_class_name("back")
     card_text = back_card.text
-    # card_image = back_card.find_element_by_tag_name('img')
-    # if card_image:
-    #     card_image_link = card_image.get_attribute('src')
-    # return (card_text, card_image_link)
     return card_text
 
 
@@ -97,9 +94,8 @@ def get_cards_info_of_deck(chrome_webdriver: WebDriver, deck: WebElement):
     """
     Get the cards info of each deck
     """
-    # deck_info = dict()
 
-    try: 
+    try:
         glasses_icon = deck.find_element_by_class_name("ion-ios-glasses-outline")
         glasses_icon.click()
         sleep(2)
@@ -108,9 +104,16 @@ def get_cards_info_of_deck(chrome_webdriver: WebDriver, deck: WebElement):
         )
         cards_list = cards_window_selection.find_elements_by_class_name("preview-card")
         csv_file_name = get_file_name_for_csv_files(chrome_webdriver)
-
-        with open(f"{csv_file_name}.csv", "w", newline="") as csv_file:
-            writer = csv.writer(csv_file, delimiter=" ")
+        path = os.getcwd()
+        path_csv = f"{path}/csv/"
+        try:
+            os.mkdir(path_csv)
+        except OSError:
+            pass
+        with open(
+            f"{path_csv}{csv_file_name}.csv", "w", newline="", encoding="utf-8"
+        ) as csv_file:
+            writer = csv.writer(csv_file, delimiter=",")
             for card in cards_list:
                 front_info = get_front_card_info(card)
                 back_info = get_back_card_info(card)
@@ -135,13 +138,13 @@ def main():
             sleep(5)
             decks_list = get_children_decks(chrome, child)
         for deck in decks_list:
-            try: 
+            try:
                 get_cards_info_of_deck(chrome, deck)
             except NoSuchElementException:
                 sleep(5)
                 get_cards_info_of_deck(chrome, deck)
 
-    sleep(6000000)
+    sleep(60)
 
 
 main()
