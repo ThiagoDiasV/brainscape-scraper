@@ -72,7 +72,7 @@ def get_images_from_cards(card: WebElement, card_side: str) -> str:
         parent_element = card.find_element_by_class_name(card_side)
         img_element = parent_element.find_element_by_tag_name("img")
         src_img = img_element.get_attribute("src")
-        return f'\n<img src="{src_img}" >'
+        return f'\n<br><img src="{src_img}" >'
     except NoSuchElementException:
         return ""
 
@@ -83,7 +83,7 @@ def get_card_text(card: WebElement, card_side: str) -> str:
     """
     card_img_tag = get_images_from_cards(card, card_side)
     card_info = card.find_element_by_class_name(card_side)
-    card_text = card_info.text + card_img_tag
+    card_text = card_info.text + "\n" + card_img_tag
     return card_text
 
 
@@ -112,14 +112,12 @@ def get_cards_info_of_deck(chrome_webdriver: WebDriver, deck: WebElement):
         cards_list = cards_window_selection.find_elements_by_class_name("preview-card")
         csv_file_name = get_file_name_for_csv_files(chrome_webdriver)
         path = os.getcwd()
-        path_csv = f"{path}/csv/"
+        path_csv = f"{path}/csv_sem_utf8_delimiter_virgula/"
         try:
             os.mkdir(path_csv)
         except OSError:
             pass
-        with open(
-            f"{path_csv}{csv_file_name}.csv", "w", newline="", encoding="utf-8"
-        ) as csv_file:
+        with open(f"{path_csv}{csv_file_name}.csv", "w", newline="") as csv_file:
             writer = csv.writer(csv_file, delimiter=",")
             for card in cards_list:
                 front_info = get_card_text(card, "front")
