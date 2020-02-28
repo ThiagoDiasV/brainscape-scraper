@@ -67,9 +67,8 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "7.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Cross-platform colored terminal text."
-marker = "python_version >= \"3.4\" and sys_platform == \"win32\""
 name = "colorama"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
@@ -368,16 +367,8 @@ optional = false
 python-versions = "*"
 version = "0.1.8"
 
-[[package]]
-category = "main"
-description = "A Python module for creating Excel XLSX files."
-name = "xlsxwriter"
-optional = false
-python-versions = "*"
-version = "1.2.7"
-
 [metadata]
-content-hash = "26d78c7a4c1af586d82fecdcd479930e3195a22645cd9ccb7593a9d16674db5b"
+content-hash = "cdaa43de09703fb8f30b99d26690cbc28419fab35f7501f017b0041f18b30b74"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -550,8 +541,4 @@ urllib3 = [
 wcwidth = [
     {file = "wcwidth-0.1.8-py2.py3-none-any.whl", hash = "sha256:8fd29383f539be45b20bd4df0dc29c20ba48654a41e661925e612311e9f3c603"},
     {file = "wcwidth-0.1.8.tar.gz", hash = "sha256:f28b3e8a6483e5d49e7f8949ac1a78314e740333ae305b4ba5defd3e74fb37a8"},
-]
-xlsxwriter = [
-    {file = "XlsxWriter-1.2.7-py2.py3-none-any.whl", hash = "sha256:5d3630ff9b2a277c939bd5053d0e7466499593abebbab9ce1dc9b1481a8ebbb6"},
-    {file = "XlsxWriter-1.2.7.tar.gz", hash = "sha256:18fe8f891a4adf7556c05d56059e136f9fbce5b19f9335f6d7b42c389c4592bc"},
 ]

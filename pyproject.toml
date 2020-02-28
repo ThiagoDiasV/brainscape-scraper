@@ -7,7 +7,7 @@ authors = ["thiagodiasv <thiago76ers@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 selenium = "^3.141.0"
-xlsxwriter = "^1.2.7"
+colorama = "^0.4.3"
 
 [tool.poetry.dev-dependencies]
 pylama = "^7.7.1"
